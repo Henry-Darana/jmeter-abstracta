@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+}
+
+group 'org.henry'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+class JMeterRule implements ComponentMetadataRule {
+    void execute(ComponentMetadataContext context) {
+        context.details.allVariants {
+            withDependencies {
+                removeAll { it.group == "org.apache.jmeter" && it.name == "bom" }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation 'us.abstracta.jmeter:jmeter-java-dsl:1.8'
+    implementation 'org.testng:testng:7.1.0'
+    implementation group: 'org.apache.jmeter', name: 'ApacheJMeter_core', version: '5.5'
+    implementation group: 'org.apache.jmeter', name: 'jorphan', version: '5.3'
+    implementation 'org.assertj:assertj-core:3.24.2'
+
+
+    components {
+        withModule("org.apache.jmeter:ApacheJMeter_core", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_http", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_functions", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_components", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_config", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter_java", JMeterRule)
+        withModule("org.apache.jmeter:ApacheJMeter", JMeterRule)
+        withModule("org.apache.jmeter:jorphan", JMeterRule)
+    }
+}
+
+test {
+    useTestNG()
+}
