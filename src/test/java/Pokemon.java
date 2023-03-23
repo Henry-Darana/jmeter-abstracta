@@ -16,6 +16,15 @@ public class Pokemon {
 
     @Test
     public void showInGUI() throws IOException {
-        testPlan(threadGroup(10, 2, httpSampler("https://pokeapi.co/api/v2/berry/1/"))).showInGui();
+        testPlan(threadGroup(1, 2, httpSampler(Routes.getBerryEndpoint(1)))).showInGui();
+    }
+
+    @Test
+    public void validateBerryFirmnessFromBerry() throws IOException {
+        TestPlanStats stats = testPlan(threadGroup(1, 1,
+                httpSampler(Routes.getBerryEndpoint(1)).children(jsonExtractor("FIRMNESS_PATH", "firmness.url")),
+                httpSampler("${FIRMNESS_PATH}"))).run();
+        Assert.assertTrue(stats.overall().sampleTimePercentile99().getSeconds() <= 5);
+
     }
 }
