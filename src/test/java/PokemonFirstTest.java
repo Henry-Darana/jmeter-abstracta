@@ -1,13 +1,15 @@
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import us.abstracta.jmeter.javadsl.core.TestPlanStats;
+import us.abstracta.jmeter.javadsl.core.listeners.JtlWriter;
 
 import java.io.IOException;
 import java.time.Duration;
 
 import static us.abstracta.jmeter.javadsl.JmeterDsl.*;
+import static us.abstracta.jmeter.javadsl.dashboard.DashboardVisualizer.dashboardVisualizer;
 
-public class PokemonTest {
+public class PokemonFirstTest {
 
     @Test
     public void responseTimeUnder5Seconds() throws IOException {
@@ -48,9 +50,8 @@ public class PokemonTest {
 
     @Test
     public void validateUniformRandomTimer() throws IOException {
-        TestPlanStats stats = testPlan(threadGroup(3, 1,
-                httpSampler(Routes.getBerryEndpoint(1)).children(
-                        uniformRandomTimer(Duration.ofSeconds(3), Duration.ofSeconds(10))))).run();
+        TestPlanStats stats = testPlan(threadGroup(3, 1, httpSampler(Routes.getBerryEndpoint(1)).children(
+                uniformRandomTimer(Duration.ofSeconds(3), Duration.ofSeconds(10))))).run();
 
         Assert.assertTrue(stats
                 .overall()
@@ -101,9 +102,44 @@ public class PokemonTest {
     @Test(enabled = false)
     public void resultsTreeVisual() throws IOException {
         testPlan(threadGroup()
-                        .rampToAndHold(10, Duration.ofSeconds(10), Duration.ofSeconds(30))
+                .rampToAndHold(10, Duration.ofSeconds(10), Duration.ofSeconds(30))
+                .children(httpSampler(Routes.getStatsEndpoint(1))), resultsTreeVisualizer()).run();
+    }
+
+    @Test
+    public void validateJTLWriter() throws IOException {
+        testPlan(threadGroup()
+                .rampToAndHold(2, Duration.ofSeconds(10), Duration.ofSeconds(5))
+                .children(httpSampler(Routes.getStatsEndpoint(1))), jtlWriter("target/jtls")).run();
+    }
+
+    @Test
+    public void validateJTLWriterWithSuccessAndFailures() throws IOException {
+        testPlan(threadGroup()
+                        .rampToAndHold(2, Duration.ofSeconds(10), Duration.ofSeconds(5))
                         .children(httpSampler(Routes.getStatsEndpoint(1))),
-                resultsTreeVisualizer()
-        ).run();
+                jtlWriter("target/jtls/success").logOnly(JtlWriter.SampleStatus.SUCCESS),
+                jtlWriter("target/jtls/failures")
+                        .logOnly(JtlWriter.SampleStatus.ERROR)
+                        .withAllFields()).run();
+    }
+
+    @Test
+    public void generateHTMLReports() throws IOException {
+        TestPlanStats stats = testPlan(threadGroup()
+                .rampToAndHold(5, Duration.ofSeconds(5), Duration.ofSeconds(20))
+                .rampToAndHold(10, Duration.ofSeconds(10), Duration.ofSeconds(30))
+                .children(httpSampler(Routes.getStatsEndpoint(21))), htmlReporter("target/reports")).run();
+    }
+
+    @Test(enabled = false)
+    public void visualizeDashboard() throws IOException {
+        TestPlanStats stats = testPlan(threadGroup("Berry")
+                        .rampToAndHold(5, Duration.ofSeconds(1), Duration.ofSeconds(3))
+                        .children(httpSampler(Routes.getBerryEndpoint(1)), jsonExtractor("ITEM_PATH", "item.url")),
+                threadGroup("Item")
+                        .rampToAndHold(5, Duration.ofSeconds(3), Duration.ofSeconds(5))
+                        .children(httpSampler("${ITEM_PATH}")),
+                dashboardVisualizer()).run();
     }
 }

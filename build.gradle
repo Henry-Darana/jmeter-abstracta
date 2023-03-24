@@ -25,6 +25,7 @@ dependencies {
     implementation group: 'org.apache.jmeter', name: 'ApacheJMeter_core', version: '5.5'
     implementation group: 'org.apache.jmeter', name: 'jorphan', version: '5.3'
     implementation 'org.assertj:assertj-core:3.24.2'
+    implementation 'us.abstracta.jmeter:jmeter-java-dsl-dashboard:1.9'
 
 
     components {
