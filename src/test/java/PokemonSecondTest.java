@@ -49,4 +49,24 @@ public class PokemonSecondTest {
                 httpSampler("Flavor", "${FLAVOR}"), httpSampler("Item", "${ITEM}"),
                 httpSampler("Natural Gift Type", "${NATURAL_GIFT_TYPE}"))).run();
     }
+
+    @Test
+    public void validateIfController() throws IOException {
+        testPlan(threadGroup("Follow Up", 2, 1, httpSampler(Routes.getColorEndpoint(1))
+                        .children(jsonExtractor("SPECIES", "pokemon_species[0].url"),
+                                jsonExtractor("NAME", "pokemon_species[0].name")),
+                ifController("${NAME}==murkrow",
+                        httpSampler("Species", "${SPECIES}")))).run();
+    }
+
+    @Test
+    public void validateForController() throws IOException {
+        String species = "SPECIES";
+        String specie = "SPECIE";
+        testPlan(threadGroup("Follow Up", 2, 1, httpSampler(Routes.getColorEndpoint(1))
+                        .children(jsonExtractor(species, "pokemon_species[*].url")
+                        ),
+                forEachController(species, specie,
+                        httpSampler(specie)))).run();
+    }
 }
