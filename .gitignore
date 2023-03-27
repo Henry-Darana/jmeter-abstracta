@@ -15,6 +15,9 @@
 **/.gradle/
 .gradle/
 
+#jmeter output files
+**/target/
+
 #Intellij Idea files including IT's generated gradle files that are super annoying
 *.iml
 **/.idea
