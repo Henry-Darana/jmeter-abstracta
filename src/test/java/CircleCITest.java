@@ -11,10 +11,6 @@ public class CircleCITest {
     @Test
     public void responseTimeUnder5Seconds() throws IOException {
         TestPlanStats stats = testPlan(threadGroup(1, 2, httpSampler(Routes.getBerryEndpoint(1)))).run();
-
-        Assert.assertTrue(stats
-                .overall()
-                .sampleTimePercentile99()
-                .getSeconds() <= 5);
+        Assert.assertTrue(stats.overall().sampleTimePercentile99().getSeconds() <= 5);
     }
 }

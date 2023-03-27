@@ -1,13 +1,14 @@
 version: 2.1
 
-orbs:
-  browser-tools: circleci/browser-tools@1.1.0
+#orbs:
+#  browser-tools: circleci/browser-tools@1.1.0
 
 jobs:
   circleci-jmeter:
     docker:
       - image: cimg/openjdk:16.0.0
-      - image: justb4/jmeter:latest
+      - image: cimg/node:15.0.1
+    #      - image: justb4/jmeter:latest
     steps:
       - checkout
       - run:
