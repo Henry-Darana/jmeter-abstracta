@@ -43,3 +43,8 @@ dependencies {
 test {
     useTestNG()
 }
+
+tasks.withType(Test) {
+    scanForTestClasses = false
+    include "**/CircleCITest.*"
+}

@@ -1,0 +1,19 @@
+version: 2.1
+
+orbs:
+  browser-tools: circleci/browser-tools@1.1.0
+
+jobs:
+  circleci-jmeter:
+    docker:
+      - image: justb4/jmeter:latest
+    steps:
+      - checkout
+      - run:
+          name: Run Tests
+          command: ./gradlew test
+
+workflows:
+  circleci-jmeter-workflow:
+    jobs:
+      - circleci-jmeter
