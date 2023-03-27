@@ -6,8 +6,8 @@ orbs:
 jobs:
   circleci-jmeter:
     docker:
-      - image: justb4/jmeter:latest
       - image: cimg/openjdk:16.0.0
+      - image: justb4/jmeter:latest
     steps:
       - checkout
       - run:
