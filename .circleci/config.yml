@@ -16,6 +16,7 @@ jobs:
           command: ./gradlew test
 
 workflows:
+  version: 2
   circleci-jmeter-workflow:
     jobs:
       - circleci-jmeter
