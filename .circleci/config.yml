@@ -19,3 +19,4 @@ workflows:
   circleci-jmeter-workflow:
     jobs:
       - circleci-jmeter
+      - circleci-jmeter
